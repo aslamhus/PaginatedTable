@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { usePrev } from '../../hooks/usePrev';
 import { findTableColumnIndexByName } from '../../../LogsheetReader/App/utils/utils';
+import { debounce } from 'lodash';
 
 export const usePaginatedTable = ({
   title,
@@ -14,7 +15,6 @@ export const usePaginatedTable = ({
   columnsToFilter,
   dropdownPageLimits,
 }) => {
-  const navigate = useNavigate();
   const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tableData, setTableData] = useState(null);
@@ -50,7 +50,14 @@ export const usePaginatedTable = ({
 
   const handlePageChange = (page) => setPagination({ ...pagination, page });
 
-  const handleFilterChange = (filter) => setTableOptions({ ...tableOptions, filter });
+  const handleFilterChange = (filter) => {
+    console.log('filter', filter, tableOptions);
+    setTableOptions({ ...tableOptions, filter });
+  };
+
+  const debouncedHandleFilterChange = useCallback(debounce(handleFilterChange, 500), [
+    tableOptions,
+  ]);
 
   const handleSearchColumnChange = (colIndex) => {
     // set the column index
@@ -216,6 +223,6 @@ export const usePaginatedTable = ({
     handlePageChange,
     handleOrderChange,
     handleSearchColumnChange,
-    handleFilterChange,
+    handleFilterChange: debouncedHandleFilterChange,
   };
 };
