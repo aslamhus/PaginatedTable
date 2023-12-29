@@ -122,14 +122,16 @@ export const usePaginatedTable = ({
     // call the onFetchData function
     try {
       const res = await Promise.resolve(
-        onFetchData({
-          columns,
-          limit: pagination.pageLimit,
-          offset,
-          order,
-          filter,
-          abortToken,
-        })
+        onFetchData(
+          {
+            columns,
+            limit: pagination.pageLimit,
+            offset,
+            order,
+            filter,
+          },
+          abortToken
+        )
       );
       handleFetchSuccess(res, tableOptions);
     } catch (error) {

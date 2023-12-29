@@ -29,13 +29,6 @@ export const getCellValue = (cell, rowData, filter, searchColumns) => {
   if (filter && (searchColumns === '' || searchColumns.includes(cell.name))) {
     value = highlightText(filter, value, 'search-term-highlight');
   }
-  // date format
-  if (cell.name == 'air_date') {
-    value = new Date(value).toLocaleDateString('en-us', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  }
+
   return value;
 };
