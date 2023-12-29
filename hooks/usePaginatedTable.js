@@ -43,17 +43,15 @@ export const usePaginatedTable = ({
   const handlePageLimitChange = (pageLimit) => {
     // calculate the new page
     // set the page based on the new page limit
-    const newTotalPages = Math.floor(pagination.totalItems / pageLimit);
+    const newTotalPages = Math.floor(pagination.totalItems / pageLimit) + 1;
     const newPage = pagination.page > newTotalPages ? newTotalPages : pagination.page;
+    console.log('new page limit', { pageLimit, newPage });
     setPagination({ ...pagination, page: newPage, pageLimit });
   };
 
   const handlePageChange = (page) => setPagination({ ...pagination, page });
 
-  const handleFilterChange = (filter) => {
-    console.log('filter', filter, tableOptions);
-    setTableOptions({ ...tableOptions, filter });
-  };
+  const handleFilterChange = (filter) => setTableOptions({ ...tableOptions, filter });
 
   const debouncedHandleFilterChange = useCallback(debounce(handleFilterChange, 500), [
     tableOptions,
@@ -100,10 +98,12 @@ export const usePaginatedTable = ({
    * Calls the api to fetch data
    */
   const fetchData = async () => {
-    // calc offset
+    // calc offset, making sure it's 0 if page is 1
+    // the api is 0 - indexed, but the pagination is 1 - indexed
     const pageIndex = pagination.page - 1 ?? 0;
     const limit = pagination?.pageLimit ?? 0;
     const offset = pageIndex * limit;
+    console.log('calculate offset:', `${pageIndex} * ${limit} = ${offset}`);
     // abort any pending requests
     if (abortToken?.abort) {
       abortToken.abort();
